@@ -1,0 +1,56 @@
+html{
+    --black: #0f1724;
+    --card:    #35297A;
+    --grey:  #a9a9a9;
+    --green:  #096900;
+}
+
+*{
+    margin: 0;
+}
+
+body{
+    background-color: var(--black);
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.wrap{
+    margin: 0 auto;
+    max-width: 1100px;
+    padding: 1rem;
+}
+
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand{
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+}
+
+.logo{
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: var(--green);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    color: #01271a;
+}
+
+nav{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+nav a{
+    color: var(--grey);
+}
