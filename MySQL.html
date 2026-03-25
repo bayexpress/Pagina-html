@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cisco - MySQL Database Server Test</title>
+    <link rel="stylesheet" href="Styles_SQL.css">
+    <link rel="icon" href="https://www.citypng.com/public/uploads/preview/cisco-blue-logo-png-735811696610010utjhevbxcl.png" type="image/png">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Cisco -->
+        <header class="header">
+            <div class="logo">
+                <img src="https://www.citypng.com/public/uploads/preview/cisco-blue-logo-png-735811696610010utjhevbxcl.png" alt="Cisco Logo">
+                <h1>Cisco Systems</h1>
+            </div>
+            <div class="status">
+                <span class="online">● MySQL Server Activo</span>
+            </div>
+        </header>
+
+        <h2 class="title">Simulación de Prueba - Servidor MySQL 8.0 (Cisco)</h2>
+
+        <!-- Panel de Control -->
+        <div class="control-panel">
+            <button onclick="conectarMySQL()" class="btn-primary">Conectar a MySQL</button>
+            <button onclick="ejecutarConsulta()" class="btn-secondary">Ejecutar Consulta de Prueba</button>
+            <button onclick="insertarDatos()" class="btn-success">Insertar Nuevo Registro</button>
+            <button onclick="detenerPrueba()" class="btn-danger">Detener / Desconectar</button>
+        </div>
+
+        <!-- Área de Resultados / Log -->
+        <div class="resultados">
+            <h3>Consola MySQL - Log de Operaciones</h3>
+            <div id="log" class="log"></div>
+        </div>
+
+        <!-- Información del Servidor MySQL -->
+        <div class="server-info">
+            <h3>Estado del Servidor MySQL</h3>
+            <table>
+                <tr>
+                    <td>Servidor:</td>
+                    <td><strong>MySQL Community Server 8.0.35 - Cisco Edition</strong></td>
+                </tr>
+                <tr>
+                    <td>Host:</td>
+                    <td>192.168.1.1</td>
+                </tr>
+                <tr>
+                    <td>Puerto:</td>
+                    <td>3306</td>
+                </tr>
+                <tr>
+                    <td>Usuario:</td>
+                    <td>cisco_admin</td>
+                </tr>
+                <tr>
+                    <td>Base de Datos Actual:</td>
+                    <td><strong>cisco_network_lab</strong></td>
+                </tr>
+                <tr>
+                    <td>Estado:</td>
+                    <td id="estado-mysql" class="estado-activo">CONECTADO</td>
+                </tr>
+                <tr>
+                    <td>Registros Almacenados:</td>
+                    <td id="total-registros">1,248</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Tabla con Datos ya Almacenados -->
+        <div class="datos-almacenados">
+            <h3>Datos Almacenados en la Tabla: dispositivos_red</h3>
+            <table class="tabla-datos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Hostname</th>
+                        <th>IP Address</th>
+                        <th>Modelo</th>
+                        <th>Última Conexión</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-body">
+                    <!-- Los datos se agregarán con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let conectado = false;
+
+        // Datos iniciales ya almacenados
+        let dispositivos = [
+            { id: 101, hostname: "Router-Core-01", ip: "192.168.10.1", modelo: "Cisco ISR 4331", ultima: "2026-03-24 22:15:33", estado: "Online" },
+            { id: 102, hostname: "Switch-Dist-02", ip: "192.168.20.5", modelo: "Cisco Catalyst 9300", ultima: "2026-03-24 22:10:12", estado: "Online" },
+            { id: 103, hostname: "AP-Wireless-03", ip: "192.168.30.45", modelo: "Cisco Aironet 9120", ultima: "2026-03-24 21:55:09", estado: "Offline" },
+            { id: 104, hostname: "Firewall-Edge-01", ip: "192.168.1.254", modelo: "Cisco ASA 5506", ultima: "2026-03-24 22:20:01", estado: "Online" }
+        ];
+
+        function agregarLog(mensaje, tipo = "info") {
+            const log = document.getElementById("log");
+            const hora = new Date().toLocaleTimeString();
+            let clase = tipo === "success" ? "success" : tipo === "error" ? "error" : tipo === "warning" ? "warning" : "info";
+            
+            log.innerHTML += `<p class="${clase}"><span class="hora">[${hora}]</span> ${mensaje}</p>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function renderizarTabla() {
+            const tbody = document.getElementById("tabla-body");
+            tbody.innerHTML = "";
+            dispositivos.forEach(dev => {
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+                    <td>${dev.id}</td>
+                    <td>${dev.hostname}</td>
+                    <td>${dev.ip}</td>
+                    <td>${dev.modelo}</td>
+                    <td>${dev.ultima}</td>
+                    <td class="${dev.estado === 'Online' ? 'online' : 'offline'}">${dev.estado}</td>
+                `;
+                tbody.appendChild(fila);
+            });
+        }
+
+        function conectarMySQL() {
+            if (conectado) {
+                agregarLog("Ya estás conectado al servidor MySQL.", "warning");
+                return;
+            }
+            conectado = true;
+            document.getElementById("estado-mysql").textContent = "CONECTADO";
+            document.getElementById("estado-mysql").className = "estado-activo";
+
+            agregarLog("Conectando a MySQL en 192.168.1.1:3306...", "info");
+            setTimeout(() => {
+                agregarLog("Conexión establecida correctamente (SSL activado)", "success");
+                agregarLog("Bienvenido, cisco_admin", "success");
+            }, 800);
+        }
+
+        function ejecutarConsulta() {
+            if (!conectado) {
+                agregarLog("Error: Primero debes conectarte al servidor MySQL.", "error");
+                return;
+            }
+            agregarLog("Ejecutando consulta: SELECT * FROM dispositivos_red LIMIT 10;", "info");
+            setTimeout(() => {
+                agregarLog(`Consulta completada. Filas devueltas: ${dispositivos.length}`, "success");
+            }, 700);
+        }
+
+        function insertarDatos() {
+            if (!conectado) {
+                agregarLog("Error: Debes estar conectado para insertar datos.", "error");
+                return;
+            }
+
+            const nuevoId = dispositivos.length + 101;
+            const nuevoDispositivo = {
+                id: nuevoId,
+                hostname: `Device-Test-${nuevoId}`,
+                ip: `192.168.50.${nuevoId % 255}`,
+                modelo: "Cisco Test Device",
+                ultima: new Date().toISOString().slice(0, 19).replace("T", " "),
+                estado: "Online"
+            };
+
+            dispositivos.unshift(nuevoDispositivo);
+            renderizarTabla();
+
+            document.getElementById("total-registros").textContent = (1248 + dispositivos.length - 4).toLocaleString();
+
+            agregarLog(`INSERT INTO dispositivos_red VALUES (${nuevoId}, '${nuevoDispositivo.hostname}', '${nuevoDispositivo.ip}')`, "info");
+            setTimeout(() => {
+                agregarLog("Registro insertado correctamente. ID: " + nuevoId, "success");
+            }, 600);
+        }
+
+        function detenerPrueba() {
+            if (!conectado) return;
+            conectado = false;
+            document.getElementById("estado-mysql").textContent = "DESCONECTADO";
+            document.getElementById("estado-mysql").className = "estado-inactivo";
+            agregarLog("Desconectado del servidor MySQL.", "warning");
+        }
+
+        // Inicializar la tabla con datos ya almacenados
+        window.onload = () => {
+            renderizarTabla();
+            agregarLog("Servidor MySQL listo para recibir consultas.", "info");
+        };
+    </script>
+</body>
+</html>

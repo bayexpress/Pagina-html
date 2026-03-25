@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cisco Web Server Test - Simulation</title>
+    <link rel="stylesheet" href="Styles_cisco.css">
+    <link rel="icon" href="https://www.citypng.com/public/uploads/preview/cisco-blue-logo-png-735811696610010utjhevbxcl.png" type="image/png">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Cisco -->
+        <header class="header">
+            <div class="logo">
+                <img src="https://www.citypng.com/public/uploads/preview/cisco-blue-logo-png-735811696610010utjhevbxcl.png" alt="Cisco Logo">
+                <h1>Cisco Systems</h1>
+            </div>
+            <div class="status">
+                <span class="online">● Servidor Web Activo</span>
+            </div>
+        </header>
+
+        <!-- Título de la Prueba -->
+        <h2 class="title">Simulación de Prueba - Servidor Web Cisco</h2>
+
+        <!-- Panel de Control -->
+        <div class="control-panel">
+            <button onclick="iniciarPrueba()" class="btn-primary">Iniciar Prueba de Servidor</button>
+            <button onclick="detenerPrueba()" class="btn-secondary">Detener Prueba</button>
+        </div>
+
+        <!-- Área de Resultados -->
+        <div id="resultados" class="resultados">
+            <h3>Resultados de la Prueba</h3>
+            <div id="log" class="log"></div>
+        </div>
+
+        <!-- Información del Servidor -->
+        <div class="server-info">
+            <h3>Información del Servidor Web</h3>
+            <table>
+                <tr>
+                    <td>Servidor:</td>
+                    <td><strong>Cisco IOS Web Server (Simulado)</strong></td>
+                </tr>
+                <tr>
+                    <td>Dirección IP:</td>
+                    <td>192.168.1.1</td>
+                </tr>
+                <tr>
+                    <td>Puerto:</td>
+                    <td>80 / 443 (HTTPS)</td>
+                </tr>
+                <tr>
+                    <td>Versión:</td>
+                    <td>Cisco Web Server v15.2</td>
+                </tr>
+                <tr>
+                    <td>Estado Actual:</td>
+                    <td id="estado-servidor" class="estado-activo">EN LÍNEA</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let pruebaActiva = false;
+
+        function agregarLog(mensaje, tipo = "info") {
+            const log = document.getElementById("log");
+            const hora = new Date().toLocaleTimeString();
+            let clase = "";
+
+            if (tipo === "success") clase = "success";
+            if (tipo === "error") clase = "error";
+            if (tipo === "warning") clase = "warning";
+
+            log.innerHTML += `<p class="${clase}"><span class="hora">[${hora}]</span> ${mensaje}</p>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function iniciarPrueba() {
+            if (pruebaActiva) return;
+
+            pruebaActiva = true;
+            const log = document.getElementById("log");
+            log.innerHTML = "";
+
+            agregarLog("Iniciando prueba del servidor web Cisco...", "info");
+            
+            setTimeout(() => {
+                agregarLog("Conectando al servidor 192.168.1.1:80...", "info");
+            }, 800);
+
+            setTimeout(() => {
+                agregarLog("Respuesta HTTP/1.1 200 OK recibida", "success");
+            }, 1600);
+
+            setTimeout(() => {
+                agregarLog("Tiempo de respuesta: 28 ms", "success");
+            }, 2200);
+
+            setTimeout(() => {
+                agregarLog("Verificando certificado SSL... ✓ Válido", "success");
+            }, 3000);
+
+            setTimeout(() => {
+                agregarLog("Prueba de carga: 50 solicitudes simultáneas", "info");
+            }, 3800);
+
+            setTimeout(() => {
+                agregarLog("Todas las solicitudes completadas con éxito", "success");
+            }, 4800);
+
+            setTimeout(() => {
+                agregarLog("✅ Prueba finalizada correctamente", "success");
+                agregarLog("El servidor web Cisco está funcionando correctamente.", "success");
+            }, 5500);
+        }
+
+        function detenerPrueba() {
+            if (!pruebaActiva) return;
+            pruebaActiva = false;
+            agregarLog("Prueba detenida por el usuario.", "warning");
+        }
+    </script>
+</body>
+</html>
